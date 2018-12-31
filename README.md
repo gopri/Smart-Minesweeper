@@ -33,5 +33,20 @@ Your agent will receive only one percept:
 - Following an UNCOVER action, your argent will perceive the hint number associated with the previous UNCOVER action. This number represents how many mines are within that tile’s immediate neighbors.
 - Following a FLAG or UNFLAG action, your agent will perceive -1.
 
+## Compiling and executing the program
+### Compile
+Run "make" command from folder containing makefile. (shell's root directory)  
+(It will create bin folder with .pyc files)
+
+### Generate worlds
+Exceute "./generateTournament.sh" script to generate worlds.
+
+### Execute
+Execute:    
+python3 Main.pyc -f "../../WorldGenerator/Problems/"  
+
+To play it manually, use -d:  
+python3 Main.pyc -df "../../WorldGenerator/Problems/"
+
 ## References
 1. [Minesweeper Project (AI)](https://canvas.eee.uci.edu/courses/11735/pages/coding-project-minesweeper)
