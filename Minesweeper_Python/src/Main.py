@@ -105,7 +105,7 @@ def main():
 			scoreExp = 0
 			for dirpath, _, filenames in directory:
 				for filename in filenames:
-					print(filename)
+					#print(filename)
 					f = os.path.join(dirpath, filename)
 
 					world = World(filename=f, aiType=aiType, verbose=verbose, debug=debug)
