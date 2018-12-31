@@ -48,20 +48,19 @@ class MyAI( AI ):
 					self.boardState["covered"].append((i,j))
 					
 		
-		#print("sx ",self.sX, "sy ", self.sY)
+		print("sx ",self.sX, "sy ", self.sY)
 		if self.grid:
-			#print(self.grid)
-			#print("rowdim ", self.rowDim, "col ", self.colDim)
+			print(self.grid)
+			print("rowdim ", self.rowDim, "col ", self.colDim)
 			
-			self.grid[self.colDim-1-self.sY][self.sX] = 0
-			#print(self.grid)
+			self.grid[self.sX][self.sY] = 0
+			print(self.grid)
 
 		########################################################################
 		#							YOUR CODE ENDS							   #
 		########################################################################
 
 	def addToSafeTiles(self, curTile):
-		#print("@in addsafe")
 		lastx = curTile[0]
 		lasty = curTile[1]
 
@@ -73,7 +72,6 @@ class MyAI( AI ):
 				self.safeTiles.add((x,y))
 
 	def addToMineTiles(self, curTile):
-		#print("@in addmines")
 		lastx = curTile[0]
 		lasty = curTile[1]
 
@@ -85,8 +83,7 @@ class MyAI( AI ):
 				self.mineTiles.add((x,y))
 		
 	def checkSurroundings(self, curTile):
-		#print("@in checksur")
-		number = self.grid[self.colDim-1-curTile[1]][curTile[0]]
+		number = self.grid[curTile[0]][curTile[1]]
 
 		#if hint is 0, add its adjacent tiles in safe set if its covered
 		if number not in ('f', 'c', '0'):
@@ -102,9 +99,9 @@ class MyAI( AI ):
 				y = lasty + j
 
 				if x>=0 and x<self.rowDim and y>=0 and y<self.colDim:
-					if self.grid[self.colDim-1-y][x] == 'f':
+					if self.grid[x][y] == 'f':
 						flagNo+=1
-					elif self.grid[self.colDim-1-y][x] == 'c':
+					elif self.grid[x][y] == 'c':
 						tilesCov+=1
 						self.tilesProb[(x,y)] += 1
 
@@ -119,7 +116,7 @@ class MyAI( AI ):
 		########################################################################
 		#							YOUR CODE BEGINS						   #
 		########################################################################
-		'''
+
 		print("####")
 		print("-grid  ", self.grid)
 		print("-boardS  ", self.boardState)
@@ -127,11 +124,11 @@ class MyAI( AI ):
 		print("-safeTil  ", self.safeTiles)
 		print(" - mines   ", self.mineTiles)
 		print("- lasttile ", self.lastTile)
-		print("####")'''
+		print("####")
 		if number>=0:
-			self.grid[self.colDim-1-self.lastTile[1]][self.lastTile[0]] = str(number)
+			self.grid[self.lastTile[0]][self.lastTile[1]] = str(number)
 		else:
-			self.grid[self.colDim-1-self.lastTile[1]][self.lastTile[0]] = 'f'
+			self.grid[self.lastTile[0]][self.lastTile[1]] = 'f'
 
 		#If its solved, Leave
 		if not self.boardState["covered"]:
@@ -139,13 +136,11 @@ class MyAI( AI ):
 
 		#if hint is 0, add its adjacent tiles in safe set if its covered
 		if not number:
-			#print("!!not number")
 			self.addToSafeTiles(self.lastTile)
 
 		#If number greater than 0, put in tileState with its number and adjacent covered tiles
 		#else it will be Flag or unflag action, and do nothing
 		elif number > 0:
-			#print("!!number>0")
 			#self.tileState[self.lastTile] = [number, []]
 
 			flagNo = 0
@@ -158,9 +153,9 @@ class MyAI( AI ):
 				y = lasty + j
 
 				if x>=0 and x<self.rowDim and y>=0 and y<self.colDim:
-					if self.grid[self.colDim-1-y][x] == 'f':
+					if self.grid[x][y] == 'f':
 						flagNo+=1
-					elif self.grid[self.colDim-1-y][x] == 'c':
+					elif self.grid[x][y] == 'c':
 						tilesCov+=1
 						self.tilesProb[(x,y)] += 1
 
@@ -170,7 +165,6 @@ class MyAI( AI ):
 				self.addToMineTiles(self.lastTile)
 		
 		else:
-			#print("!!number =-1")
 			lastx = self.lastTile[0]
 			lasty = self.lastTile[1]
 
@@ -183,12 +177,9 @@ class MyAI( AI ):
 
 		#If all mines flagged - Uncover all covered tiles
 		if not self.totMines:
-			#print("!!mines 0")
 			nextTile = self.boardState["covered"].pop(0)
 			self.boardState["uncovered"].append(nextTile)
 			if nextTile in self.tilesProb: del self.tilesProb[nextTile]
-			self.safeTiles.discard(nextTile)
-			self.mineTiles.discard(nextTile)
 			#self.posFlagToSafe(nextTile)
 			self.lastTile = nextTile
 			self.lastAction = 'u'
@@ -196,13 +187,10 @@ class MyAI( AI ):
 
 		#If covered tiles equal to mines, flag them all
 		elif self.totMines == len(self.boardState["covered"]):
-			#print("!!mies=cov")
 			self.totMines -= 1
 			nextTile = self.boardState["covered"].pop(0)
 			self.boardState["uncovered"].append(nextTile)
 			if nextTile in self.tilesProb: del self.tilesProb[nextTile]
-			self.safeTiles.discard(nextTile)
-			self.mineTiles.discard(nextTile)
 			#self.posFlagToSafe(nextTile)
 			self.lastTile = nextTile
 			self.lastAction = 'f'
@@ -210,27 +198,21 @@ class MyAI( AI ):
 
 		#else, uncover one of safetiles and proceed
 		elif self.safeTiles:
-			#print("!!safe tile")
 			nextTile = self.safeTiles.pop()
 			self.boardState["uncovered"].append(nextTile)
 			self.boardState["covered"].remove(nextTile)
 			if nextTile in self.tilesProb: del self.tilesProb[nextTile]
-			self.safeTiles.discard(nextTile)
-			self.mineTiles.discard(nextTile)
 			#self.posFlagToSafe(nextTile)
 			self.lastTile = nextTile
 			self.lastAction = 'u'
 			return Action(AI.Action.UNCOVER, nextTile[0], nextTile[1])
 
 		elif self.mineTiles:
-			#print("!!mine tile")
 			self.totMines -= 1
 			nextTile = self.mineTiles.pop()
 			self.boardState["uncovered"].append(nextTile)
 			self.boardState["covered"].remove(nextTile)
 			if nextTile in self.tilesProb: del self.tilesProb[nextTile]
-			self.safeTiles.discard(nextTile)
-			self.mineTiles.discard(nextTile)
 			#self.posFlagToSafe(nextTile)
 			self.lastTile = nextTile
 			self.lastAction = 'f'
@@ -238,28 +220,19 @@ class MyAI( AI ):
 
 		#If no safetile left, flag tiles which has hint number equal to adj covered tiles - as only 1 mine it will work
 		else:
-			#print("!!else")
-			
 			nextTile = max(self.tilesProb.items(), key=operator.itemgetter(1))[0]
-			if nextTile:
-				self.totMines -= 1
-				self.boardState["uncovered"].append(nextTile)
-				self.boardState["covered"].remove(nextTile)
-				if nextTile in self.tilesProb: del self.tilesProb[nextTile]
-				self.safeTiles.discard(nextTile)
-				self.mineTiles.discard(nextTile)
-				#self.posFlagToSafe(nextTile)
-				self.lastTile = nextTile
-				self.lastAction = 'f'
-				return Action(AI.Action.FLAG, nextTile[0], nextTile[1])
+			self.boardState["uncovered"].append(nextTile)
+			self.boardState["covered"].remove(nextTile)
+			if nextTile in self.tilesProb: del self.tilesProb[nextTile]
+			#self.posFlagToSafe(nextTile)
+			self.lastTile = nextTile
+			self.lastAction = 'f'
+			return Action(AI.Action.FLAG, nextTile[0], nextTile[1])
 			
-			#print("!!random")
 			#If didnot get anything from above, uncover random tile
 			nextTile = self.boardState["covered"].pop(0)
 			self.boardState["uncovered"].append(nextTile)
 			if nextTile in self.tilesProb: del self.tilesProb[nextTile]
-			self.safeTiles.discard(nextTile)
-			self.mineTiles.discard(nextTile)
 			self.lastTile = nextTile
 			self.lastAction = 'u'
 			return Action(AI.Action.UNCOVER, nextTile[0], nextTile[1])
