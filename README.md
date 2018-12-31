@@ -50,3 +50,6 @@ python3 Main.pyc -df "../../WorldGenerator/Problems/"
 
 ## References
 1. [Minesweeper Project (AI)](https://canvas.eee.uci.edu/courses/11735/pages/coding-project-minesweeper)
+
+## Notes
+The Python shell uses Python version 3.5.2
